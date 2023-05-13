@@ -4,7 +4,6 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 const app = express();
-const port = 3000;
 
 app.get('/', async (req, res) => {
   try {
@@ -34,7 +33,8 @@ app.get('/', async (req, res) => {
   }
 });
 
-const server = app.listen(port, () => {
+const PORT = process.env.PORT || "8080";
+const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
 
