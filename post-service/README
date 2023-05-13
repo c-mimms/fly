@@ -1,0 +1,7 @@
+This is a node service that powers the posts API endpoints.
+
+POST /api/posts: Create a new post. The request payload should contain the necessary information such as the user ID, content, visibility, etc.
+
+GET /api/posts/{postID}: Retrieve a specific post by its ID.
+
+GET /api/posts: Retrieve a list of posts, possibly with optional parameters for filtering or pagination.
