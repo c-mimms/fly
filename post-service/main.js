@@ -35,7 +35,7 @@ app.get('/', async (req, res) => {
 
 const PORT = process.env.PORT || "8080";
 const server = app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on ${PORT}`);
 });
 
 // Cleanup resources when the server is shutting down
