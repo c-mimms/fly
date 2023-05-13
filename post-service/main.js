@@ -1,24 +1,48 @@
-import { PrismaClient } from '@prisma/client'
+import express from 'express';
+import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
-async function main() {
-  const posts = await prisma.post.findMany();
-  console.log(posts);
+const app = express();
+const port = 3000;
 
-  // const newPost = await prisma.post.create({
-  //   data: {
-  //     user_id: 0,
-  //     visibility: 'public',
-  //     content: 'https://fly.io/docs/reference/postgres'
-  //   }
-  // })
-}
+app.get('/', async (req, res) => {
+  try {
+    const posts = await prisma.post.findMany();
 
-main()
-  .catch((e) => {
-    throw e
-  })
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+    // Render the posts in a basic HTML format
+    const html = `
+      <html>
+        <head>
+          <title>Posts</title>
+        </head>
+        <body>
+          <h1>Posts</h1>
+          <ul>
+            ${posts
+              .map((post) => `<li>${post.content}</li>`)
+              .join('')}
+          </ul>
+        </body>
+      </html>
+    `;
+
+    res.send(html);
+  } catch (error) {
+    console.error('Error retrieving posts:', error);
+    res.status(500).send('An error occurred while retrieving posts.');
+  }
+});
+
+const server = app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
+
+// Cleanup resources when the server is shutting down
+const cleanup = async () => {
+  await prisma.$disconnect();
+  server.close();
+};
+
+process.on('SIGINT', cleanup);
+process.on('SIGTERM', cleanup);
