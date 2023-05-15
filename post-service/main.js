@@ -1,9 +1,25 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const prisma = new PrismaClient();
 
 const app = express();
+
+//Can serve static files in the future
+// app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/privacy', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'privacy_policy.html'));
+});
+
+app.get('/tos', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'terms_of_service.html'));
+});
 
 app.get('/', async (req, res) => {
   try {
