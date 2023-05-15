@@ -12,6 +12,7 @@ const app = express();
 
 //Can serve static files in the future
 // app.use(express.static(path.join(__dirname, 'public')));
+app.set('view engine', 'ejs');
 
 app.get('/privacy', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'privacy_policy.html'));
@@ -24,30 +25,13 @@ app.get('/tos', (req, res) => {
 app.get('/', async (req, res) => {
   try {
     const posts = await prisma.post.findMany();
-
-    // Render the posts in a basic HTML format
-    const html = `
-      <html>
-        <head>
-          <title>Posts</title>
-        </head>
-        <body>
-          <h1>Posts</h1>
-          <ul>
-            ${posts
-              .map((post) => `<li>${post.content}</li>`)
-              .join('')}
-          </ul>
-        </body>
-      </html>
-    `;
-
-    res.send(html);
+    res.render('posts', { posts });
   } catch (error) {
     console.error('Error retrieving posts:', error);
     res.status(500).send('An error occurred while retrieving posts.');
   }
 });
+
 
 const PORT = process.env.PORT || "8080";
 const server = app.listen(PORT, () => {
@@ -56,9 +40,11 @@ const server = app.listen(PORT, () => {
 
 // Cleanup resources when the server is shutting down
 const cleanup = async () => {
-  await prisma.$disconnect();
-  server.close();
+  // await prisma.$disconnect();
+  debug('SIGTERM signal received: closing HTTP server')
+  server.close(() => {
+    debug('HTTP server closed')
+  })
 };
 
-process.on('SIGINT', cleanup);
 process.on('SIGTERM', cleanup);
