@@ -26,7 +26,7 @@ fetch('/api/posts')
 }
 
 function logout() {
-location.href = "/logout";
+  location.href = "/auth/logout";
 }
 
 function createPost(event) {
