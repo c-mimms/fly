@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Posts</title>
+    <link rel="stylesheet" href="/css/app.css">
+  </head>
+  <body>
+    <div class="navbar">
+      <div class="container navbar-content">
+        <h1 class="navbar-title">Posts</h1>
+        <div class="navbar-buttons">
+          <button onclick="openModal()">Create Post</button>
+          <button onclick="logout()">Logout</button>
+          <!-- Add other buttons as needed -->
+        </div>
+      </div>
+    </div>
+
+    <h1>Posts</h1>
+    <ul id="posts">
+      <!-- Posts will be inserted here by JavaScript -->
+    </ul>
+
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <h2>Create Post</h2>
+        <form id="createPostForm" onsubmit="createPost(event)">
+          <label for="content">Content:</label>
+          <textarea id="content" name="content" rows="4" cols="50" required></textarea>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="/script/app.js"></script>
+  </body>
+</html>
