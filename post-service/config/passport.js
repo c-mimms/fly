@@ -23,9 +23,8 @@ passport.use(
   async (accessToken, refreshToken, profile, done) => {
     const existingUser = await prisma.user.findUnique({ where: { googleId: profile.id } });
 
-    console.log(profile);
+    // console.log(profile);
     if (existingUser) {
-      console.log(existingUser);
       //TODO populate any fields if the user updates their account
       done(null, existingUser);
     } else {

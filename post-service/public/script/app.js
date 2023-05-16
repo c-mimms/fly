@@ -17,8 +17,9 @@ fetch('/api/posts')
     const postsElement = document.getElementById('posts');
     postsElement.innerHTML = '';  // Clear the existing posts
     data.posts.forEach(post => {
+      console.log(post);
       const li = document.createElement('li');
-      li.textContent = post.content;
+      li.textContent = post.author?.username + ": " + post.content;
       postsElement.appendChild(li);
     });
   })

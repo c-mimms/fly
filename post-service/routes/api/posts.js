@@ -41,6 +41,9 @@ async function getPostsHandler(req, res) {
   try {
     const posts = await prisma.post.findMany({
       where: query,
+      include: {
+        author: true
+      }
     });
     res.json({ posts });
   } catch (error) {
