@@ -8,10 +8,11 @@ generator client {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
+  id       Int     @id @default(autoincrement())
+  googleId String  @unique
+  username String
+  email    String?
+  posts    Post[]
 }
 
 model Post {
