@@ -4,7 +4,7 @@ datasource db {
 }
 
 generator client {
-  provider  = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 model User {
@@ -16,13 +16,12 @@ model User {
 }
 
 model Post {
-  id         Int      @id @default(autoincrement())
-  author     User?     @relation(fields: [authorId], references: [id])
-  authorId   Int?
-  timestamp  DateTime @default(now())
-  visibility String?
-  content    String
-
-  // Relationships
-  // ...
+  id            Int      @id @default(autoincrement())
+  author        User?    @relation(fields: [authorId], references: [id])
+  authorId      Int?
+  timestamp     DateTime @default(now())
+  visibility    String?
+  content       String
+  incomingLinks Post[]   @relation("LinkedPosts")
+  outgoingLinks Post[]   @relation("LinkedPosts")
 }
