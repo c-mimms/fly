@@ -75,3 +75,12 @@
   .author-name {
     margin-top: 20px; /* Adjust the value to increase or decrease the spacing */
   }
+
+  g.selected rect {
+    stroke: #333;
+    stroke-width: 2px;
+  }
+
+  g.dragging rect {
+    fill: #AAF;
+  }

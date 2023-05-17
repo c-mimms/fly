@@ -10,6 +10,45 @@ function closeModal() {
   modal.style.display = 'none';
 }
 
+// Keep track of the selected posts
+let selectedPosts = [];
+
+// Update the selection state of the post elements
+function updatePostSelection() {
+  const postElements = document.querySelectorAll("g");
+
+  postElements.forEach((postElement) => {
+    const post = postElement.__data__;
+    const isSelected = selectedPosts.includes(post);
+
+    postElement.classList.toggle("selected", isSelected);
+  });
+  console.log(selectedPosts);
+
+  //Show button
+  const buttonGroup = document.getElementById("buttonGroup");
+  const createLinkedPostButton = document.getElementById("createLinkedPostButton");
+
+  if (selectedPosts.length > 0) {
+    // buttonGroup.style.display = "block";
+    // createLinkedPostButton.addEventListener("click", openCreateLinkedPostModal);
+    const linkedPostsInput = document.getElementById('linkedPosts');
+    const linkedPostIds = selectedPosts.map(post => post.id);
+    linkedPostsInput.value = JSON.stringify(linkedPostIds);
+  } else {
+    const linkedPostsInput = document.getElementById('linkedPosts');
+    linkedPostsInput.value = "";
+    // buttonGroup.style.display = "none";
+    // createLinkedPostButton.removeEventListener("click", openCreateLinkedPostModal);
+  }
+}
+
+function openCreateLinkedPostModal() {
+  const linkedPostsInput = document.getElementById('linkedPosts');
+  const linkedPostIds = selectedPosts.map(post => post.id);
+  linkedPostsInput.value = JSON.stringify(linkedPostIds);
+  openModal();
+}
 
 function createPostElement(post) {
   // Create a container for the post
@@ -60,9 +99,9 @@ function createPostElement(post) {
 
   // Create a div to hold the HTML content
   const div = document.createElement("div");
-  // Listen to the "load" event to determine the rendered size of the content
+  //TODO Find a better way to do this, div's don't have an onload event, so another element?
   setTimeout(() => {
-    console.log(div);
+    // console.log(div);
     const { scrollWidth, scrollHeight } = div;
     foreignObject.setAttribute("width", scrollWidth);
     foreignObject.setAttribute("height", scrollHeight);
@@ -79,6 +118,30 @@ function createPostElement(post) {
   postContainer.appendChild(foreignObject);
   postContainer.insertBefore(rect, postContainer.firstChild);
 
+
+  // Add event listener for post selection
+  postContainer.addEventListener("click", (event) => {
+    if (event.shiftKey) {
+      // Add or remove from selection with shift + click
+      if (selectedPosts.includes(post)) {
+        selectedPosts = selectedPosts.filter((selectedPost) => selectedPost !== post);
+      } else {
+        selectedPosts.push(post);
+      }
+    } else {
+      // Single click selection
+      if (selectedPosts.length === 1 && selectedPosts[0] === post) {
+        // Deselect the post if it was already selected
+        selectedPosts = [];
+      } else {
+        selectedPosts = [post];
+      }
+    }
+
+    // Update the selection state of the post element
+    updatePostSelection();
+  });
+
   return postContainer;
 }
 
@@ -87,6 +150,9 @@ function createLinkElement() {
   link.style.stroke = "#aaa";
   return link;
 }
+
+var simulation;
+var svg;
 
 function loadPosts() {
   fetch('/api/posts')
@@ -108,13 +174,13 @@ function loadPosts() {
       const linkElements = links.map(createLinkElement);
 
       // Create the D3 force simulation
-      const simulation = d3.forceSimulation(posts)
-        .force("link", d3.forceLink(links).id(d => d.id).distance(100))
-        .force("charge", d3.forceManyBody().strength(-50))
+      simulation = d3.forceSimulation(posts)
+        .force("link", d3.forceLink(links).id(d => d.id).distance(500))
+        .force("charge", d3.forceManyBody().strength(-200))
         .force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2));
 
       // Create the SVG container for the graph
-      const svg = d3.select("#posts")
+      svg = d3.select("#posts")
         .attr("width", window.innerWidth)
         .attr("height", window.innerHeight)
         .call(d3.zoom().on("zoom", function (event) {
@@ -146,16 +212,19 @@ function loadPosts() {
           .attr("x2", d => d.target.x)
           .attr("y2", d => d.target.y);
 
-        node
-          .attr("transform", d => `translate(${d.x}, ${d.y})`);
+          node
+          .attr("transform", d => `translate(${d.x}, ${d.y})`)
+          .classed("dragging", d => selectedPosts.includes(d));
       });
 
       // Drag functions for nodes
       function dragstarted(event) {
         if (!event.active) simulation.alphaTarget(0.3).restart();
+
         event.subject.fx = event.subject.x;
         event.subject.fy = event.subject.y;
       }
+
 
       function dragged(event) {
         event.subject.fx = event.x;
@@ -182,8 +251,9 @@ function createPost(event) {
 
   const form = document.getElementById('createPostForm');
   const content = form.elements.content.value;
+  const outgoingLinks = form.elements.outgoingLinks.value;
 
-  const data = { content };
+  const data = { content, outgoingLinks};
 
   fetch('/api/posts', {
     method: 'POST',
@@ -211,7 +281,8 @@ loadPosts();
 closeModal();
 
 window.addEventListener("resize", function() {
-  svg.attr("width", window.innerWidth).attr("height", window.innerHeight);
+  svg.attr("width", window.innerWidth).attr("height", window.innerHeight)
   simulation.force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2));
   simulation.restart();
+
 });

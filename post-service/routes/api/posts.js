@@ -42,7 +42,9 @@ async function getPostsHandler(req, res) {
     const posts = await prisma.post.findMany({
       where: query,
       include: {
-        author: true
+        author: true,
+        incomingLinks: true,
+        outgoingLinks: true,
       }
     });
     res.json({ posts });
@@ -66,13 +68,22 @@ async function getPostHandler(req, res) {
 
 async function createPostHandler(req, res) {
   try {
-    const { content } = req.body;
-    const newPost = await prisma.post.create({
-      data: {
-        content,
-        authorId: req.user.id,
+    const { content, authorId, timestamp, visibility, outgoingLinks } = req.body;
+    const parsedOutgoingLinks = outgoingLinks ? JSON.parse(outgoingLinks) : [];
+    const postData = {
+      content: content || '',
+      authorId: authorId || req.user.id,
+      timestamp: timestamp || new Date(),
+      visibility: visibility || '',
+      outgoingLinks: {
+        connect: parsedOutgoingLinks.map(link => ({ id: link })),
       },
+    };
+
+    const newPost = await prisma.post.create({
+      data: postData,
     });
+
     res.status(201).json(newPost);
   } catch (error) {
     console.error('Error creating post:', error);
