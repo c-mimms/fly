@@ -3,6 +3,8 @@
   <head>
     <title>Posts</title>
     <link rel="stylesheet" href="/css/app.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
   </head>
   <body>
     <div class="navbar">
@@ -17,12 +19,17 @@
     </div>
 
     <h1>Posts</h1>
-    <ul id="posts">
+    <!-- <ul id="posts"> -->
       <!-- Posts will be inserted here by JavaScript -->
-    </ul>
+    <!-- </ul> -->
+    <div id="posts-container">
+      <svg id="posts" width="960" height="600"></svg>
+    </div>
+    
 
     <div id="modal" class="modal">
       <div class="modal-content">
+        <span class="close-button" onclick="closeModal()">&times;</span>
         <h2>Create Post</h2>
         <form id="createPostForm" onsubmit="createPost(event)">
           <label for="content">Content:</label>
