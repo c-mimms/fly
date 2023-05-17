@@ -10,6 +10,84 @@ function closeModal() {
   modal.style.display = 'none';
 }
 
+
+function createPostElement(post) {
+  // Create a container for the post
+  // const postContainer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+  // // Create the rectangle for the post
+  // const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+  // rect.setAttribute("width", 120);
+  // rect.setAttribute("height", 60);
+  // rect.setAttribute("fill", "#69b3a2");
+  // postContainer.appendChild(rect);
+
+  // // Create the label for the post
+  // const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  // label.textContent = post.author?.username + ": " + post.content;
+  // label.setAttribute("text-anchor", "middle");
+  // label.setAttribute("alignment-baseline", "middle");
+  // label.setAttribute("font-size", "12px");
+  // postContainer.appendChild(label);
+
+  // // Create the timestamp for the post
+  // const timestamp = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  // timestamp.textContent = post.timestamp;
+  // timestamp.setAttribute("text-anchor", "end");
+  // timestamp.setAttribute("alignment-baseline", "top");
+  // timestamp.setAttribute("font-size", "10px");
+  // postContainer.appendChild(timestamp);
+
+  const postContainer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+  // Convert the markdown content to HTML
+  const authorContent = `<p class="author-name">${post.author?.username}</p><p>${post.timestamp}</p>`
+  const htmlContent = marked.parse(post.content) + authorContent;
+
+  // Create a foreignObject element to embed HTML within SVG
+  const foreignObject = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
+
+  // Set initial width and height to allow content to dictate the size
+  const initialWidth = 300; // Set an initial width (adjust as needed)
+  const initialHeight = 200; // Set an initial height (adjust as needed)
+  foreignObject.setAttribute("width", initialWidth);
+  foreignObject.setAttribute("height", initialHeight);
+
+  const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+  rect.setAttribute("width", foreignObject.getAttribute("width"));
+  rect.setAttribute("height", foreignObject.getAttribute("width"));
+  rect.setAttribute("fill", "#69b3a2");
+
+  // Create a div to hold the HTML content
+  const div = document.createElement("div");
+  // Listen to the "load" event to determine the rendered size of the content
+  setTimeout(() => {
+    console.log(div);
+    const { scrollWidth, scrollHeight } = div;
+    foreignObject.setAttribute("width", scrollWidth);
+    foreignObject.setAttribute("height", scrollHeight);
+    rect.setAttribute("width", scrollWidth);
+    rect.setAttribute("height", scrollHeight);
+  }, 200);
+  div.innerHTML = htmlContent;
+
+  // Append the div to the foreignObject
+  foreignObject.appendChild(div);
+
+
+  // Append the foreignObject to the postContainer
+  postContainer.appendChild(foreignObject);
+  postContainer.insertBefore(rect, postContainer.firstChild);
+
+  return postContainer;
+}
+
+function createLinkElement() {
+  const link = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  link.style.stroke = "#aaa";
+  return link;
+}
+
 function loadPosts() {
   fetch('/api/posts')
     .then(response => response.json())
@@ -25,6 +103,9 @@ function loadPosts() {
           });
         }
       });
+
+      const postElements = posts.map(createPostElement);
+      const linkElements = links.map(createLinkElement);
 
       // Create the D3 force simulation
       const simulation = d3.forceSimulation(posts)
@@ -45,41 +126,17 @@ function loadPosts() {
       const link = svg.selectAll("line")
         .data(links)
         .enter()
-        .append("line")
-        .style("stroke", "#aaa");
+        .append(() => linkElements.shift());
 
       // Create the node elements as rectangles
-      const node = svg.selectAll("rect")
+      const node = svg.selectAll("g")
         .data(posts)
         .enter()
-        .append("rect")
-        .attr("width", 120)
-        .attr("height", 60)
-        .attr("fill", "#69b3a2")
+        .append(() => postElements.shift())
         .call(d3.drag()
           .on("start", dragstarted)
           .on("drag", dragged)
           .on("end", dragended));
-
-      // Add labels to the nodes
-      const label = svg.selectAll(null)
-        .data(posts)
-        .enter()
-        .append("text")
-        .text(d => d.author?.username + ": " + d.content)
-        .style("text-anchor", "middle")
-        .style("alignment-baseline", "middle")
-        .style("font-size", "12px");
-
-      // Add timestamps to the nodes
-      const timestamp = svg.selectAll(null)
-        .data(posts)
-        .enter()
-        .append("text")
-        .text(d => d.timestamp)
-        .style("text-anchor", "end")
-        .style("alignment-baseline", "top")
-        .style("font-size", "10px");
 
       // Update the positions of nodes and links on each tick
       simulation.on("tick", () => {
@@ -90,16 +147,7 @@ function loadPosts() {
           .attr("y2", d => d.target.y);
 
         node
-          .attr("x", d => d.x)
-          .attr("y", d => d.y);
-
-        label
-          .attr("x", d => d.x)
-          .attr("y", d => d.y);
-
-        timestamp
-          .attr("x", d => d.x + 60)
-          .attr("y", d => d.y - 30);
+          .attr("transform", d => `translate(${d.x}, ${d.y})`);
       });
 
       // Drag functions for nodes
