@@ -38,7 +38,18 @@ async function getPostHandler(req, res) {
 async function createPostHandler(req, res) {
   try {
     const { content, authorId, timestamp, visibility, outgoingLinks } = req.body;
-    const parsedOutgoingLinks = outgoingLinks ? JSON.parse(outgoingLinks) : [];
+    let parsedOutgoingLinks;
+    try {
+      // Try to parse as JSON
+      parsedOutgoingLinks = JSON.parse(outgoingLinks);
+      if (!Array.isArray(parsedOutgoingLinks)) {
+        // If it's not an array, make it an array
+        parsedOutgoingLinks = [parsedOutgoingLinks];
+      }
+    } catch {
+      // If it's not parseable JSON, treat it as a string
+      parsedOutgoingLinks = [outgoingLinks];
+    }
     const postData = {
       content: content || '',
       authorId: authorId || req.user.id,
