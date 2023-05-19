@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
+  "exports": "./main.js",
   "type": "module",
   "scripts": {
     "start": "node main.js",

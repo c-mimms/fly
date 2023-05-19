@@ -1,0 +1,38 @@
+<!-- singlePost.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Single Post</title>
+</head>
+<body>
+  <h1>Single Post</h1>
+  <div>
+    <h2>Post Details</h2>
+    <p>Post ID: <%= post.id %></p>
+    <p>Content: <%= post.content %></p>
+    <p>Author: <%= post.author?.name %></p>
+    <p>Timestamp: <%= post.timestamp.toISOString() %></p>
+    <p>Visibility: <%= post.visibility %></p>
+  </div>
+
+  <hr>
+
+  <div>
+    <h2>Comments</h2>
+    <% if (linkedPosts.length === 0) { %>
+      <p>No comments yet.</p>
+    <% } else { %>
+      <% linkedPosts.forEach(function(comment) { %>
+        <div>
+          <h3>Comment ID: <%= comment.id %></h3>
+          <p>Content: <%= comment.content %></p>
+          <p>Author: <%= comment.author?.name %></p>
+          <p>Timestamp: <%= comment.timestamp.toISOString() %></p>
+          <p>Visibility: <%= comment.visibility %></p>
+        </div>
+        <hr>
+      <% }); %>
+    <% } %>
+  </div>
+</body>
+</html>
