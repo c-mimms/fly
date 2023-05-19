@@ -1,12 +1,12 @@
-<!-- singlePost.ejs -->
 <!DOCTYPE html>
 <html>
 <head>
+  <link rel="stylesheet" type="text/css" href="/css/post.css">
   <title>Single Post</title>
 </head>
 <body>
-  <h1>Single Post</h1>
-  <div>
+  <h1 class="title">Single Post</h1>
+  <div class="post-details">
     <h2>Post Details</h2>
     <p>Post ID: <%= post.id %></p>
     <p>Content: <%= post.content %></p>
@@ -17,22 +17,95 @@
 
   <hr>
 
-  <div>
+  <div class="add-comment">
+    <h2>Add Comment</h2>
+    <button class="addCommentButton" data-comment-id="<%= post.id %>">Add Comment</button>
+  </div>
+
+  <hr>
+
+  <div id="commentsContainer" class="comments-container">
     <h2>Comments</h2>
-    <% if (linkedPosts.length === 0) { %>
-      <p>No comments yet.</p>
-    <% } else { %>
-      <% linkedPosts.forEach(function(comment) { %>
-        <div>
-          <h3>Comment ID: <%= comment.id %></h3>
+
+    <% function displayComments(comments, depth) { %>
+      <% comments?.forEach(function(comment) { %>
+        <div class="comment">
+          <h3>Comment ID: <a href="/p/<%= comment.id %>"><%= comment.id %></a></h3>
           <p>Content: <%= comment.content %></p>
-          <p>Author: <a href="/u/<%= post.author?.id %>"><%= comment.author?.username %></a></p>
+          <p>Author: <a href="/u/<%= comment.author?.id %>"><%= comment.author?.username %></a></p>
           <p>Timestamp: <%= comment.timestamp.toISOString() %></p>
           <p>Visibility: <%= comment.visibility %></p>
+          <hr>
+          <button class="addCommentButton" data-comment-id="<%= comment.id %>">Reply</button>
+          <% if (comment.linkedPosts && comment.linkedPosts.length > 0) { %>
+            <div class="nested-comments" style="margin-left: 20px;">
+              <%= displayComments(comment.linkedPosts, depth + 1) %>
+            </div>
+          <% } %>
         </div>
-        <hr>
       <% }); %>
     <% } %>
+
+    <% if (post.linkedPosts?.length === 0) { %>
+      <p>No comments yet.</p>
+    <% } else { %>
+      <%= displayComments(post.linkedPosts, 0) %>
+    <% } %>
   </div>
-</body>
-</html>
+
+  <script>
+    const addCommentButtons = document.querySelectorAll('.addCommentButton');
+    const commentsContainer = document.getElementById('commentsContainer');
+
+    function addCommentForm(parentId, depth, container) {
+      const form = document.createElement('form');
+      form.innerHTML = `
+          <input type="hidden" name="parentId" value="${parentId}">
+          <input type="hidden" name="depth" value="${depth}">
+          <textarea name="content" placeholder="Enter a reply to this comment" rows="3" cols="50" required></textarea>
+          <button type="submit" class="submit-button">Reply</button>
+      `;
+  
+      form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+  
+          const content = form.elements.content.value;
+          const outgoingLinks = form.elements.parentId.value;
+        
+          const data = { content, outgoingLinks};
+
+          const response = await fetch('/api/posts', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(data)
+          });
+  
+          if (response.ok) {
+              // Optionally refresh the page or update the comment list
+          } else {
+              // Handle or display error
+          }
+      });
+  
+      container.appendChild(form);
+  }
+  
+      addCommentButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const parentId = button.dataset.commentId;
+          let depth = 0;
+          const parentComment = button.closest('.comment');
+          if (parentComment) {
+            depth = parentComment.querySelectorAll('.comment').length;
+          }
+      
+          const commentContainer = parentComment ? parentComment : commentsContainer;
+          addCommentForm(parentId, depth, commentContainer);
+        });
+      });
+    </script>
+  </body>
+  </html>
+  
