@@ -77,5 +77,5 @@ function ensureAuthenticated(req, res, next) {
     return res.status(401).json({ error: 'Not authenticated' });
   }
   // For non-AJAX requests, redirect to the Google auth page
-  res.redirect('/auth/google');
+  res.redirect(`/auth/google/${encodeURIComponent(req.originalUrl)}`);
 }
