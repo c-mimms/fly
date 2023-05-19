@@ -6,7 +6,7 @@ import passport from 'passport';
 import session from 'express-session';
 import './config/passport.js';
 import { router as authRouter } from './routes/auth.js';
-import { router as postRouter } from './routes/api/posts.js';
+import { router as apiRouter } from './routes/api/api.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,7 +30,8 @@ app.set('view engine', 'ejs');
 
 // Routes
 app.use('/auth', authRouter);
-app.use('/api/posts', postRouter);
+// app.use('/p', postRouter);
+app.use('/api', apiRouter);
 app.get('/', landingPageHandler);
 app.get('/privacy', privacyPageHandler);
 app.get('/tos', tosPageHandler);
