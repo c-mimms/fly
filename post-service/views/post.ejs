@@ -10,7 +10,7 @@
     <h2>Post Details</h2>
     <p>Post ID: <%= post.id %></p>
     <p>Content: <%= post.content %></p>
-    <p>Author: <%= post.author?.name %></p>
+    <p>Author: <a href="/u/<%= post.author?.id %>"><%= post.author?.username %></a></p>
     <p>Timestamp: <%= post.timestamp.toISOString() %></p>
     <p>Visibility: <%= post.visibility %></p>
   </div>
@@ -26,7 +26,7 @@
         <div>
           <h3>Comment ID: <%= comment.id %></h3>
           <p>Content: <%= comment.content %></p>
-          <p>Author: <%= comment.author?.name %></p>
+          <p>Author: <a href="/u/<%= post.author?.id %>"><%= comment.author?.username %></a></p>
           <p>Timestamp: <%= comment.timestamp.toISOString() %></p>
           <p>Visibility: <%= comment.visibility %></p>
         </div>

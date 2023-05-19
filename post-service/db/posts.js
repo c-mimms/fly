@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 /**
  * Get all posts.
  * @param {object} [options] - The query options.
- * @param {string} [options.authors] - Comma-separated author IDs.
+ * @param {array} [options.authors] - Comma-separated author IDs.
  * @param {Date} [options.startTime] - Start time for filtering posts.
  * @param {Date} [options.endTime] - End time for filtering posts.
  * @param {number} [options.outgoingLinks] - The ID of the post to filter outgoing links.
@@ -19,54 +19,54 @@ async function getPosts(options = {}) {
 
     // If authors are provided, convert them into an array of numbers
     if (authors) {
-      prismaQuery.authorId = {
-        in: authors.split(',').map((id) => parseInt(id, 10)),
-      };
+        prismaQuery.authorId = {
+            in: authors,
+        };
     }
 
     // If startTime is provided, add it to the query
     if (startTime) {
-      prismaQuery.timestamp = {
-        gte: startTime,
-        ...prismaQuery.timestamp,
-      };
+        prismaQuery.timestamp = {
+            gte: startTime,
+            ...prismaQuery.timestamp,
+        };
     }
 
     // If endTime is provided, add it to the query
     if (endTime) {
-      prismaQuery.timestamp = {
-        lte: endTime,
-        ...prismaQuery.timestamp,
-      };
+        prismaQuery.timestamp = {
+            lte: endTime,
+            ...prismaQuery.timestamp,
+        };
     }
 
     // If outgoingLinks is provided, add it to the query
     if (outgoingLinks) {
-      prismaQuery.outgoingLinks = {
-        some: {
-          id: parseInt(outgoingLinks, 10),
-        },
-      };
+        prismaQuery.outgoingLinks = {
+            some: {
+                id: parseInt(outgoingLinks, 10),
+            },
+        };
     }
 
     // If incomingLinks is provided, add it to the query
     if (incomingLinks) {
-      prismaQuery.incomingLinks = {
-        some: {
-          id: parseInt(incomingLinks, 10),
-        },
-      };
+        prismaQuery.incomingLinks = {
+            some: {
+                id: parseInt(incomingLinks, 10),
+            },
+        };
     }
 
     return prisma.post.findMany({
-      where: prismaQuery,
-      include: {
-        author: true,
-        incomingLinks: true,
-        outgoingLinks: true,
-      },
+        where: prismaQuery,
+        include: {
+            author: true,
+            incomingLinks: true,
+            outgoingLinks: true,
+        },
     });
-  }
+}
 
 
 /**
@@ -75,7 +75,12 @@ async function getPosts(options = {}) {
  * @returns {Promise<object|null>} - A Promise that resolves to the post object or null if not found.
  */
 async function getPost(id) {
-  return prisma.post.findUnique({ where: { id: parseInt(id, 10) } });
+    return prisma.post.findUnique({
+        where: { id: parseInt(id, 10)},
+        include: {
+            author: true
+        },
+    });
 }
 
 /**
@@ -84,9 +89,9 @@ async function getPost(id) {
  * @returns {Promise<object>} - A Promise that resolves to the newly created post.
  */
 async function createPost(postData) {
-  return prisma.post.create({
-    data: postData,
-  });
+    return prisma.post.create({
+        data: postData,
+    });
 }
 
 /**
@@ -96,10 +101,10 @@ async function createPost(postData) {
  * @returns {Promise<object|null>} - A Promise that resolves to the updated post object or null if not found.
  */
 async function updatePost(id, updatedData) {
-  return prisma.post.update({
-    where: { id: parseInt(id, 10) },
-    data: updatedData,
-  });
+    return prisma.post.update({
+        where: { id: parseInt(id, 10) },
+        data: updatedData,
+    });
 }
 
 /**
@@ -108,7 +113,7 @@ async function updatePost(id, updatedData) {
  * @returns {Promise<void>} - A Promise that resolves when the post is deleted.
  */
 async function deletePost(id) {
-  return prisma.post.delete({ where: { id: parseInt(id, 10) } });
+    return prisma.post.delete({ where: { id: parseInt(id, 10) } });
 }
 
 export { getPosts, getPost, createPost, updatePost, deletePost };
