@@ -4,11 +4,11 @@ import { getPosts, getPost, createPost, updatePost, deletePost } from '../../db/
 
 const router = Router();
 
-router.get('/', ensureAuthenticated, getPostsHandler);
-router.get('/:id', ensureAuthenticated, getPostHandler);
-router.post('/', ensureAuthenticated, createPostHandler);
-router.put('/:id', ensureAuthenticated, updatePostHandler);
-router.delete('/:id', ensureAuthenticated, deletePostHandler);
+router.get('/', getPostsHandler);
+router.get('/:id', getPostHandler);
+router.post('/', createPostHandler);
+router.put('/:id', updatePostHandler);
+router.delete('/:id', deletePostHandler);
 
 async function getPostsHandler(req, res) {
   const { authors, startTime, endTime } = req.query;
@@ -79,18 +79,6 @@ async function deletePostHandler(req, res) {
     console.error('Error deleting post:', error);
     res.status(500).json({ error: 'An error occurred while deleting the post.' });
   }
-}
-
-function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  // If the request is AJAX, send a 401 error directly
-  if (req.xhr) {
-    return res.status(401).json({ error: 'Not authenticated' });
-  }
-  // For non-AJAX requests, redirect to the Google auth page
-  res.redirect('/auth/google');
 }
 
 export { router };

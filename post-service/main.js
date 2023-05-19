@@ -32,9 +32,9 @@ app.set('view engine', 'ejs');
 
 // Routes
 app.use('/auth', authRouter);
-app.use('/p', postRouter);
-app.use('/u', userRouter);
-app.use('/api', apiRouter);
+app.use('/p', ensureAuthenticated, postRouter);
+app.use('/u', ensureAuthenticated, userRouter);
+app.use('/api', ensureAuthenticated, apiRouter);
 app.get('/', landingPageHandler);
 app.get('/privacy', privacyPageHandler);
 app.get('/tos', tosPageHandler);
@@ -65,4 +65,17 @@ function privacyPageHandler(req, res) {
 
 function tosPageHandler(req, res) {
   res.sendFile(path.join(__dirname, 'public', 'terms_of_service.html'));
+}
+
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  // If the request is AJAX, send a 401 error directly
+  if (req.xhr) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+  // For non-AJAX requests, redirect to the Google auth page
+  res.redirect('/auth/google');
 }
