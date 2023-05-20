@@ -145,8 +145,32 @@ function createPostElement(post) {
   return postContainer;
 }
 
+function createMarkerDefs() {
+  // Create a marker for the arrowhead
+  const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+  const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+  marker.setAttribute("id", "arrowhead");
+  marker.setAttribute("markerWidth", "10");
+  marker.setAttribute("markerHeight", "10");
+  marker.setAttribute("refX", "9");
+  marker.setAttribute("refY", "3");
+  marker.setAttribute("orient", "auto");
+
+  // Create a path for the arrowhead shape
+  const arrowheadPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  arrowheadPath.setAttribute("d", "M0,0 L0,6 L9,3 z");
+  arrowheadPath.style.fill = "#aaa";
+
+  // Append the arrowhead path to the marker
+  marker.appendChild(arrowheadPath);
+  defs.appendChild(marker);
+
+  return defs;
+}
+
 function createLinkElement() {
   const link = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  link.setAttribute("marker-end", "url(#arrowhead)");
   link.style.stroke = "#aaa";
   return link;
 }
@@ -189,6 +213,9 @@ function loadPosts() {
         .force("charge", d3.forceManyBody().strength(-200))
         .force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2));
 
+
+      const markerDefs = createMarkerDefs();
+
       // Create the SVG container for the graph
       svg = d3.select("#posts")
         .attr("width", window.innerWidth)
@@ -198,11 +225,36 @@ function loadPosts() {
         }))
       .append("g");
 
+      // Add a 'defs' element to your SVG
+      let defs = svg.append('defs');
+
+      // Define the arrow markers
+      defs.selectAll('marker')
+          .data(['end'])
+          .enter()
+          .append('marker')
+          .attr('id', String)
+          .attr('viewBox', '0 -5 10 10')
+          .attr('refX', 15) // Controls the shift of the arrowhead along the line
+          .attr('refY', 0)
+          .attr('orient', 'auto')
+          .attr('markerWidth', 12)
+          .attr('markerHeight', 12)
+          .attr('xoverflow', 'visible')
+          .append('svg:path')
+          .attr('d', 'M0,-5L10,0L0,5')
+          .attr('fill', '#000')
+          .style('stroke','none');
+
+
+      // Append the marker definitions to the SVG
+      // svg.append(() => markerDefs);
       // Create the link elements
       const link = svg.selectAll("line")
         .data(links)
         .enter()
-        .append(() => linkElements.shift());
+        .append(() => linkElements.shift())
+        .attr('marker-end', 'url(#end)');
 
       // Create the node elements as rectangles
       const node = svg.selectAll("g")
