@@ -154,7 +154,17 @@ function createLinkElement() {
 var simulation;
 var svg;
 
+function clearSVG() {
+  // Select the SVG container
+  const svgContainer = d3.select("#posts > g");
+
+  // Clear the SVG container by setting its HTML content to an empty string
+  svgContainer.html("");
+}
+
 function loadPosts() {
+  clearSVG();
+
   fetch('/api/posts')
     .then(response => response.json())
     .then(data => {
