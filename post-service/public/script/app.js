@@ -240,8 +240,6 @@ function loadPosts() {
     .catch(error => console.error('Error loading posts:', error));
 }
 
-
-
 function logout() {
   location.href = "/auth/logout";
 }
@@ -271,6 +269,32 @@ function createPost(event) {
     })
     .catch((error) => {
       console.error('Error creating post:', error);
+    });
+}
+
+function deletePost(event) {
+  event.preventDefault();
+
+  if (selectedPosts.length == 0) {
+    return;
+  }
+  // const ids = selectedPosts;
+  const linkedPostIds = selectedPosts.map(post => post.id);
+
+  const data = { ids : linkedPostIds };
+
+  fetch('/api/posts', {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+    .then(() => {
+      loadPosts();  // Reload the posts after a new one is created
+    })
+    .catch((error) => {
+      console.error('Error deleting posts:', error);
     });
 }
 

@@ -116,4 +116,19 @@ async function deletePost(id) {
     return prisma.post.delete({ where: { id: parseInt(id, 10) } });
 }
 
-export { getPosts, getPost, createPost, updatePost, deletePost };
+/**
+ * Delete posts by IDs.
+ * @param {number[]} ids - An array of post IDs.
+ * @returns {Promise<void>} - A Promise that resolves when all the posts are deleted.
+ */
+async function deletePosts(ids) {
+    return prisma.post.deleteMany({
+        where: {
+            id: {
+                in: ids.map(id => parseInt(id, 10))
+            }
+    }});
+  }
+
+
+export { getPosts, getPost, createPost, updatePost, deletePost, deletePosts };
