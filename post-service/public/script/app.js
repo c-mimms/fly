@@ -52,30 +52,6 @@ function openCreateLinkedPostModal() {
 
 function createPostElement(post) {
   // Create a container for the post
-  // const postContainer = document.createElementNS("http://www.w3.org/2000/svg", "g");
-
-  // // Create the rectangle for the post
-  // const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-  // rect.setAttribute("width", 120);
-  // rect.setAttribute("height", 60);
-  // rect.setAttribute("fill", "#69b3a2");
-  // postContainer.appendChild(rect);
-
-  // // Create the label for the post
-  // const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-  // label.textContent = post.author?.username + ": " + post.content;
-  // label.setAttribute("text-anchor", "middle");
-  // label.setAttribute("alignment-baseline", "middle");
-  // label.setAttribute("font-size", "12px");
-  // postContainer.appendChild(label);
-
-  // // Create the timestamp for the post
-  // const timestamp = document.createElementNS("http://www.w3.org/2000/svg", "text");
-  // timestamp.textContent = post.timestamp;
-  // timestamp.setAttribute("text-anchor", "end");
-  // timestamp.setAttribute("alignment-baseline", "top");
-  // timestamp.setAttribute("font-size", "10px");
-  // postContainer.appendChild(timestamp);
 
   const postContainer = document.createElementNS("http://www.w3.org/2000/svg", "g");
 
