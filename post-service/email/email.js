@@ -40,4 +40,4 @@ async function notifyUserOfReply(user, reply) {
     }
 }
 
-export {notifyUserOfReply, sendEmailToUser}
+export {notifyUserOfReply, sendEmailToUser};

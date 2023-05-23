@@ -336,6 +336,30 @@ function deletePost(event) {
     });
 }
 
+
+function expand(event) {
+  event.preventDefault();
+
+  if (selectedPosts.length != 1) {
+    return;
+  }
+  const selectedPostId = selectedPosts.map(post => post.id);
+
+  fetch(`/api/expand/${selectedPostId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(() => {
+      loadPosts();  // Reload the posts after a new one is created
+    })
+    .catch((error) => {
+      console.error('Error deleting posts:', error);
+    });
+}
+
+
 // Initial load of posts
 loadPosts();
 
