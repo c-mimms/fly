@@ -6,6 +6,7 @@ import passport from 'passport';
 import session from 'express-session';
 import './config/passport.js';
 import { router as authRouter } from './routes/auth.js';
+import { router as workspaceRouter } from './routes/workspace.js';
 import { router as postRouter } from './routes/post.js';
 import { router as userRouter } from './routes/user.js';
 import { router as apiRouter } from './routes/api/api.js';
@@ -32,6 +33,7 @@ app.set('view engine', 'ejs');
 
 // Routes
 app.use('/auth', authRouter);
+app.use('/w', ensureAuthenticated, workspaceRouter);
 app.use('/p', ensureAuthenticated, postRouter);
 app.use('/u', ensureAuthenticated, userRouter);
 app.use('/api', ensureAuthenticated, apiRouter);

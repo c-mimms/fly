@@ -12,29 +12,12 @@ async function getSinglePostHandler(req, res) {
     const post = await getPost(id);
     if (!post) return res.status(404).json({ error: "Post not found." });
 
-    post.linkedPosts = await getNestedComments(post.id, 3);
-    res.render('post', { post });
+    res.render('workspace', { post });
 
   } catch (error) {
     console.error('Error retrieving post:', error);
     res.status(500).json({ error: 'An error occurred while retrieving the post.' });
   }
-}
-
-async function getNestedComments(postId, depth) {
-  if (depth === 0) {
-    return [];
-  }
-
-  // Fetch the post and its replies.
-  const replies = await getPosts({ outgoingLinks: postId });
-
-  // Fetch nested replies recursively.
-  for (const reply of replies) {
-    reply.linkedPosts = await getNestedComments(reply.id, depth - 1);
-  }
-
-  return replies;
 }
 
 export { router };
