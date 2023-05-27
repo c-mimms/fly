@@ -37,7 +37,7 @@ body {
 }
 
 .comments-container {
-  width: 60%;
+  width: 80%;
   margin: 20px auto;
 }
 
@@ -81,6 +81,7 @@ body {
   border-radius: 5px;
   border: 1px solid #ddd;
   resize: vertical;
+  box-sizing: border-box;
 }
 
 .submit-button {

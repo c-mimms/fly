@@ -9,17 +9,10 @@
 <body>
   <h1 class="title">Single Post</h1>
   <div class="post-details">
-    <h2>Post Details</h2>
-    <p>Post ID: <%= post.id %>
+      <p><a href="/u/<%= post.author?.id %>"><%= post.author?.username%></a> <%= post.timestamp.toLocaleString('en-US') %>
+      </p>
     </p>
-    <p>Content: <%= post.content %>
-    </p>
-    <p>Author: <a href="/u/<%= post.author?.id %>">
-        <%= post.author?.username %>
-      </a></p>
-    <p>Timestamp: <%= post.timestamp.toISOString() %>
-    </p>
-    <p>Visibility: <%= post.visibility %>
+    <p><%= post.content %>
     </p>
   </div>
 
@@ -38,20 +31,15 @@
     <% function displayComments(comments, depth) { %>
       <% comments?.forEach(function(comment) { %>
         <div class="comment">
-          <h3>Comment ID: <a href="/p/<%= comment.id %>">
-              <%= comment.id %>
-            </a></h3>
-          <p>Content: <%= comment.content %>
+          <p><%= comment.content %>
           </p>
-          <p>Author: <a href="/u/<%= comment.author?.id %>">
-              <%= comment.author?.username %>
-            </a></p>
-          <p>Timestamp: <%= comment.timestamp.toISOString() %>
-          </p>
-          <p>Visibility: <%= comment.visibility %>
+          <p><a href="/u/<%= post.author?.id %>"><%= post.author?.username%></a> <%= post.timestamp.toLocaleString('en-US') %>
           </p>
           <hr>
           <button class="addCommentButton" data-comment-id="<%= comment.id %>">Reply</button>
+          <a href="/p/<%= comment.id %>">
+              Link to this comment
+            </a>
           <% if (comment.linkedPosts && comment.linkedPosts.length> 0) { %>
             <div class="nested-comments" style="margin-left: 20px;">
               <%= displayComments(comment.linkedPosts, depth + 1) %>

@@ -1,13 +1,11 @@
 
-const addCommentButtons = document.querySelectorAll('.addCommentButton');
-const commentsContainer = document.getElementById('commentsContainer');
-
-function addCommentForm(parentId, depth, container) {
+function addCommentForm(parentId, container, isTopLevel) {
+    if(container.querySelectorAll(':scope > form').length > 0) return;
     const form = document.createElement('form');
+    form.classList.add('add-comment-form');
     form.innerHTML = `
       <input type="hidden" name="parentId" value="${parentId}">
-      <input type="hidden" name="depth" value="${depth}">
-      <textarea name="content" placeholder="Enter a reply to this comment" rows="3" cols="50" required></textarea>
+      <textarea name="content" placeholder="Enter a reply" rows="3" cols="50" required></textarea>
       <button type="submit" class="submit-button">Reply</button>
   `;
 
@@ -34,20 +32,22 @@ function addCommentForm(parentId, depth, container) {
         }
     });
 
-    var firstChild = container.firstChild;
-    container.insertBefore(form, firstChild);
+    const firstChild = container.firstChild;
+    const commentNest = container.querySelector('.nested-comments');
+    isTopLevel ? container.insertBefore(form, firstChild) : container.insertBefore(form, commentNest);
 }
+
+const addCommentButtons = document.querySelectorAll('.addCommentButton');
+const commentsContainer = document.getElementById('commentsContainer');
+
 
 addCommentButtons.forEach(button => {
     button.addEventListener('click', () => {
         const parentId = button.dataset.commentId;
-        let depth = 0;
         const parentComment = button.closest('.comment');
-        if (parentComment) {
-            depth = parentComment.querySelectorAll('.comment').length;
-        }
 
-        const commentContainer = parentComment ? parentComment : commentsContainer;
-        addCommentForm(parentId, depth, commentContainer);
+        const newCommentContainer = parentComment ? parentComment : commentsContainer;
+        const isTopLevel = parentComment != newCommentContainer;
+        addCommentForm(parentId, newCommentContainer, isTopLevel);
     });
 });
