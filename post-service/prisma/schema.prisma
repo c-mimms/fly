@@ -21,6 +21,7 @@ model Post {
   authorId      Int?
   timestamp     DateTime @default(now())
   visibility    String?
+  type          String?
   content       String
   incomingLinks Post[]   @relation("LinkedPosts")
   outgoingLinks Post[]   @relation("LinkedPosts")
