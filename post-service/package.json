@@ -7,6 +7,7 @@
   "type": "module",
   "scripts": {
     "start": "node ./src/main.js",
+    "jobs": "node ./src/jobs.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
