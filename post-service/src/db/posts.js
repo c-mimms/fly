@@ -3,18 +3,25 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+export const PostType = {
+    Job: 1,
+    Post: 2,
+    Comment: 3,
+  }
+
 /**
  * Get all posts.
  * @param {object} [options] - The query options.
  * @param {array} [options.authors] - Comma-separated author IDs.
  * @param {Date} [options.startTime] - Start time for filtering posts.
  * @param {Date} [options.endTime] - End time for filtering posts.
+ * @param {number} [options.type] - Type of post
  * @param {number} [options.outgoingLinks] - The ID of the post to filter outgoing links.
  * @param {number} [options.incomingLinks] - The ID of the post to filter incoming links.
  * @returns {Promise<object[]>} - A Promise that resolves to an array of posts.
  */
 async function getPosts(options = {}) {
-    const { authors, startTime, endTime, outgoingLinks, incomingLinks } = options;
+    const { authors, startTime, endTime, type, outgoingLinks, incomingLinks } = options;
     let prismaQuery = {};
 
     // If authors are provided, convert them into an array of numbers
@@ -37,6 +44,12 @@ async function getPosts(options = {}) {
         prismaQuery.timestamp = {
             lte: endTime,
             ...prismaQuery.timestamp,
+        };
+    }
+    
+    if (type) {
+        prismaQuery.type = {
+            in: type,
         };
     }
 
