@@ -1,0 +1,35 @@
+# fly.toml file generated for postfriend on 2023-05-13T20:07:46Z
+
+app = "baseapp"
+kill_signal = "SIGINT"
+kill_timeout = 5
+mounts = []
+primary_region = "iad"
+#processes = []
+[processes]
+  app = "npm run start"
+  jobs = "npm run jobs"
+
+[build]
+  builder = "heroku/buildpacks:20"
+
+[env]
+  PORT = "8080"
+
+[[services]]
+  internal_port = 8080
+  processes = ["app"]
+  protocol = "tcp"
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+    type = "connections"
+
+  [[services.ports]]
+    force_https = true
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443

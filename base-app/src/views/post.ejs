@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="/css/post.css">
+  <title>Single Post</title>
+</head>
+
+<body>
+  <h1 class="title">Single Post</h1>
+  <div class="post-details">
+      <p><a href="/u/<%= post.author?.id %>"><%= post.author?.username%></a> <%= post.timestamp.toLocaleString('en-US') %>
+      </p>
+    </p>
+    <p><%= post.content %>
+    </p>
+  </div>
+
+  <hr>
+</body>
+</html>
