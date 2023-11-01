@@ -7,13 +7,14 @@
   "type": "module",
   "scripts": {
     "start": "node ./src/main.js",
-    "jobs": "node ./src/jobs.js",
+    "dev": "node -r dotenv/config ./src/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "prisma": "^4.14.0"
+    "dotenv": "^16.3.1",
+    "prisma": "^4.16.2"
   },
   "dependencies": {
     "@prisma/client": "^4.14.0",

@@ -58,7 +58,7 @@ async function cleanup() {
 
 // Route Handlers
 function landingPageHandler(req, res) {
-  req.isAuthenticated() ? res.render('app') : res.render('landing');
+  req.isAuthenticated() ? res.render('home') : res.render('landing');
 }
 
 function privacyPageHandler(req, res) {

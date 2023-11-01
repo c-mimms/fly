@@ -1,3 +1,4 @@
 .env
 secrets
 sendgrid.env
+node_modules/
