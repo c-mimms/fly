@@ -7,22 +7,28 @@
   "type": "module",
   "scripts": {
     "start": "node ./src/main.js",
+    "dev": "node -r dotenv/config ./src/main.js",
     "jobs": "node ./src/jobs.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "prisma": "^4.14.0"
+    "dotenv": "^16.3.1",
+    "prisma": "^4.16.2"
   },
   "dependencies": {
-    "@prisma/client": "^4.14.0",
+    "@prisma/client": "^4.16.2",
     "@sendgrid/mail": "^7.7.0",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
-    "node-fetch": "^3.3.1",
+    "node-fetch": "^3.3.2",
     "passport": "^0.6.0",
-    "passport-google-oauth20": "^2.0.0"
+    "passport-google-oauth20": "^2.0.0",
+    "passport-local": "^1.0.0"
   }
 }

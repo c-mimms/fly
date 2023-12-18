@@ -8,11 +8,30 @@ generator client {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  googleId String  @unique
-  username String
-  email    String?
-  posts    Post[]
+  id            Int      @id @default(autoincrement())
+  googleId      String?  @unique
+  username      String   @unique
+  passwordHash  Bytes?
+  salt          Bytes?
+  email         String?
+  posts         Post[]
+  following     Follow[] @relation("Follows")
+  followers     Follow[] @relation("Followed")
+  groups        Group[]  @relation("GroupMembers")
+}
+
+model Follow {
+  id          Int   @id @default(autoincrement())
+  follower    User  @relation("Follows", fields: [followerId], references: [id])
+  followerId  Int
+  following   User  @relation("Followed", fields: [followingId], references: [id])
+  followingId Int
+}
+
+model Group {
+  id      Int    @id @default(autoincrement())
+  name    String
+  members User[] @relation("GroupMembers")
 }
 
 model Post {
