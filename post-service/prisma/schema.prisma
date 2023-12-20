@@ -10,7 +10,8 @@ generator client {
 model User {
   id            Int      @id @default(autoincrement())
   googleId      String?  @unique
-  username      String   @unique
+  username      String?  @unique
+  displayName   String
   passwordHash  Bytes?
   salt          Bytes?
   email         String?

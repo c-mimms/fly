@@ -14,6 +14,9 @@ kill_timeout = "5s"
 [env]
   PORT = "8080"
 
+[deploy]
+  release_command = "npx prisma migrate deploy"
+
 [processes]
   app = "npm run start"
   jobs = "npm run jobs"
