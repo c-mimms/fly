@@ -23,7 +23,7 @@
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "cd post-service && npm install",
-	// "postCreateCommand": "cd post-service && prisma migrate dev --name init",
+	"postCreateCommand": "npm && prisma migrate dev --name init && npx prisma db seed",
 	// && curl -L https://fly.io/install.sh | sh",&& npx prisma db seed
 
 	// Configure tool-specific properties.

@@ -37,6 +37,7 @@ passport.use(
         data: {
           googleId: profile.id,
           username: profile.displayName,
+          displayName: profile.displayName,
           email: userEmail,
           // other fields...
         }
